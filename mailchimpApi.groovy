@@ -111,6 +111,22 @@ class MailChimp {
             return false;
         }
     }
+    def getAllMailChimpList(){
+        def url = grailsApplication.config.mailchimp.apiUrl+"lists/list.json"
+        def apiKey = grailsApplication.config.mailchimp.apiKey;
+        def connection = createConnection(url)
+        connection = sendParameter(connection,["apikey":apiKey])
+
+        if(connection.responseCode != 500 ){
+            /*We can create List of MailChimpList and return them,
+            But here sending JSON response
+            */
+            return JSON.parse(connection.content.text)
+        }else{
+            println "________ 500 getAllMailChimpList _______"+apiKey
+            return false
+        }
+    }
     //Wrappers for list-ID, APIKEY
     def createConnection(def url){
         URLConnection connection = new URL(url+"?").openConnection()
