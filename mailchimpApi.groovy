@@ -127,6 +127,56 @@ class MailChimp {
             return false
         }
     }
+    
+    //To get All activity of User under specific List of Mail Chimp
+    def getBunchListUsers(def listID){
+        def url = "https://us9.api.mailchimp.com/export/1.0/list/";
+        def replyList=[];
+        def eachUser;
+        def username;
+        def FNAME;
+        def LNAME;
+        def todayDate = new Date();
+        def sdf;
+        HashMap<String,String>body = getReqMap(listID);
+
+	    //if you are looking to get data from specific date use below line 
+	    body.put('since',sdf);
+
+        body.put
+
+        def connection = createConnection(url)
+        connection = sendParameter(connection,body)
+        int i=0
+        if(connection.responseCode != 500 ){
+
+            replyList = connection.content.text.split("\n");
+ 
+            for(i=1;i<replyList.size();i++){
+                /*
+		    ["Email Address","FirstName","LastName","MEMBER_RATING","OPTIN_TIME","OPTIN_IP","CONFIRM_TIME","CONFIRM_IP",
+		    "LATITUDE","LONGITUDE","GMTOFF","DSTOFF","TIMEZONE","CC","REGION","LAST_CHANGED","LEID","EUID","NOTES"]
+		    */
+                eachUser = replyList[i].trim().replaceAll('\\[', '').replaceAll('\\]','').replaceAll('["]','').split(',');
+		        //cleaning string response.
+		        username = eachUser[0];
+                FNAME = eachUser[1];
+                LNAME = eachUser[2];
+		        //process all Details as per your requirement
+            }
+
+            //JSONObject responseJson = new JSONObject();
+            //responseJson = JSON.parse(connection.content.text);
+            //you can return data or save to DB
+            return true
+        }
+	else{ 
+	        println "____________ 500 Error getBunchListUsers _____________" + listID
+            return false
+        }
+    }
+
+    
     //Wrappers for list-ID, APIKEY
     def createConnection(def url){
         URLConnection connection = new URL(url+"?").openConnection()
