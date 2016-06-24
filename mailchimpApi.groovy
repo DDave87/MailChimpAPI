@@ -175,6 +175,57 @@ class MailChimp {
             return false
         }
     }
+    def getCampaignActivity(){
+        println "============ EMail Activity CampaignWise ============ "
+        def url = "https://us9.api.mailchimp.com/export/1.0/campaignSubscriberActivity/";
+        def responseJson;
+        def eachuserActivity=[];
+        def userActivity=[];
+        int i=0;
+        def userEmail;
+        def userAction;
+        def  res;
+        def todayDate = new Date();
+        String oldStringDate = "01-01-2010 00:00:00";
+
+        //get all campaigns
+        def campIdList = CampaignList.list();
+
+        def campLsdMap = [:];
+        campIdList.each { campId ->
+            campLsdMap.put(campId.campId,campId.lastSyncDate)
+        }
+        def sdf;
+        campLsdMap.each{ campId->
+                if(campId != null) {
+                    HashMap<String,String>body = getReqMap(campId.key);
+                    // If you want to get data after specific date, specify date in sdf as String
+		    body.put('since',sdf);
+                    body.put
+                    def connection = createConnection(url);
+                    connection = sendParameter(connection,body);
+                    if(connection.responseCode != 500 ){
+                        try{
+                            eachuserActivity = connection.content.text.split("\n");
+                            if(eachuserActivity.size()>1){
+                                for(i=0; i<eachuserActivity.size(); i++){
+                                    userActivity = eachuserActivity[i].split("\\:",2);
+                                    userEmail = userActivity[0].trim().replaceAll('[{}"]','');
+                                    userAction = userActivity[1].substring(0,userActivity[1].length()-1);
+                                }
+                            }
+                        }catch (JsonException ex){
+                            println("Not able to Parse response Json ")
+                            return false
+                        }
+                    }else{
+                        println "____________ 500 Error for Campaign _____________" + campId.campId;
+                    }
+                    //moreToProcess = true
+                }
+
+        }
+    }
 
     
     //Wrappers for list-ID, APIKEY
