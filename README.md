@@ -1,5 +1,9 @@
-# MailChimpAPI
+# MailChimp API Groovy
 How to fetch data from mailchimp with Groovy, Ready to use plug and play APIs
+This MailChimp Groovy code supports Groovy 2.2 and above.
+This internally use Mailchimp open source API of version 2.0 and 1.0 for bulk download open API
+Note : This code is for reference only Modification can be required as per usage need.
+
 #### Config.Groovy
 
 Here we are giving settings of Mailchimp API example
